@@ -1,0 +1,101 @@
+from typing import Optional, Dict
+from abc import ABC, abstractmethod
+class ICharacter(ABC):
+    """
+    Base interface for Character class to adhere to the principle of 'Design by Contract'
+    and creating a contract for the end user
+    """
+    @abstractmethod
+    def __str__(self):
+        pass
+    @abstractmethod
+    def __getitem__(self, attribute: str) -> int:
+        pass
+    @abstractmethod
+    def __setitem__(self, attribute: str, value: int) -> None:
+        pass
+class Character(ICharacter):
+    """
+    This Character class represents an entity with several attributes that determine its capabilities.
+    Each attribute has a numeric value that signifies its capability or intensity.
+    Attributes:
+        _name (str): The name of the character.
+        _attribs (dict): The attributes of the character, revealing its abilities.
+        _DEFAULT_ATTRIBUTES (dict): The default attributes and their inherent values.
+    The basic attributes supported by the class include:
+        - "strength": Depicts the physical prowess of the character.
+        - "intelligence": Illustrates the character's level of intellect.
+        - "health": Represents the well-being and vitality of the character.
+        - "speed": Determines the agility and quickness of the character.
+    Each attribute has an inherent default value of 100. Custom values can be assigned during instantiation,
+    as well as updated later, by invoking the method `_update_attributes` and special methods `__getitem__` & `__setitem__`.
+    """
+    _DEFAULT_ATTRIBUTES: Dict[str, int] = {"strength": 100, "intelligence": 100, "health": 100, "speed": 100}
+    def __init__(self, name: str, attribs: Optional[Dict[str, int]] = None) -> None:
+        """
+        The constructor for the Character class.
+        Parameters:
+            name (str): The name of the character.
+            attribs (dict[str, int], optional): The initial attributes of the character.
+                Defaults to None, which means the character gets default values.
+                Only the keys belonging to _DEFAULT_ATTRIBUTES can be set.
+        Raises:
+            ValueError: If a key in attribs is not defined in _DEFAULT_ATTRIBUTES.
+        """
+        self._name = name
+        self._attribs = self._DEFAULT_ATTRIBUTES.copy()
+        if attribs:
+            self._update_attributes(attribs)
+    def _update_attributes(self, new_attributes: Dict[str, int]) -> None:
+        """
+        Updates the attributes of the character with newer values.
+        Parameters:
+            new_attributes (dict[str, int]): The new attributes and their respective values to be assigned.
+                Updates only existing attributes and disregards new ones.
+        Raises:
+            ValueError: If the keys of `new_attributes` are not defined in _DEFAULT_ATTRIBUTES.
+        """
+        invalid_attributes = [attribute for attribute in new_attributes if attribute not in self._attribs]
+        if invalid_attributes:
+            raise ValueError(f"Invalid attribute(s) found: {', '.join(invalid_attributes)}")
+        self._attribs.update(new_attributes)
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the character.
+        The string display includes the name of the character and the current value of each attribute.
+        Returns:
+            str: A detailed view of the character's status.
+        """
+        attributes_str = "\n".join([f"{attr.capitalize()}: {val}" for attr, val in self._attribs.items()])
+        return f"Attributes of {self._name}:\n{attributes_str}"
+    def __getitem__(self, attribute: str) -> int:
+        """
+        Returns the value of the given attribute.
+        Parameters:
+           attribute (str): The attribute whose value is to be fetched.
+        Raises:
+           KeyError: If the provided attribute doesn't exist in the attribute list.
+        Returns:
+           int: The current value of the specified attribute.
+        """
+        if attribute not in self._attribs:
+            raise KeyError(f"Attribute '{attribute}' does not exist.")
+        return self._attribs[attribute]
+    def __setitem__(self, attribute: str, value: int) -> None:
+        """
+        Updates the value of a specified attribute.
+        Parameters:
+           attribute (str): The attribute to be updated.
+           value (int): The new value for the attribute.
+        Raises:
+           KeyError: If an attempt is made to assign a value to an undefined attribute.
+        """
+        if attribute not in self._attribs:
+            raise KeyError(f"Attribute '{attribute}' is not defined.")
+        self._attribs[attribute] = value
+if __name__ == "__main__":
+    initial_attrs = {"strength": 120, "intelligence": 130}
+    protagonist = Character("Good Guy", initial_attrs)
+    print(str(protagonist))  ##################################### Print the initial attributes of 'Good Guy'
+    protagonist["strength"] = 150  ##################################### Changed the strength of 'Good Guy'
+    print(str(protagonist))  ##################################### Print the updated attributes of 'Good Guy'
