@@ -27,30 +27,38 @@ chatbot_response_label.pack()
 feedback_points = 0
 
 # Function to process user feedback
+
+
 def process_feedback():
     global feedback_points
     feedback = feedback_entry.get()
-    
+
     # Process feedback and update AI model based on user ratings
     try:
         rating = int(feedback)
         if 0 <= rating <= 100:
             feedback_points += rating
             if rating < 50:
-                result_label.configure(text="Thank you for your feedback. We'll work on improving.")
+                result_label.configure(
+                    text="Thank you for your feedback. We'll work on improving.")
             else:
-                result_label.configure(text="Thank you for your positive feedback. We'll continue to improve.")
+                result_label.configure(
+                    text="Thank you for your positive feedback. We'll continue to improve.")
         else:
-            result_label.configure(text="Invalid feedback. Please provide a rating between 0 and 100.")
+            result_label.configure(
+                text="Invalid feedback. Please provide a rating between 0 and 100.")
     except ValueError:
-        result_label.configure(text="Invalid feedback. Please provide a numerical rating.")
-    
+        result_label.configure(
+            text="Invalid feedback. Please provide a numerical rating.")
+
     feedback_entry.delete(0, tk.END)
 
 # Function to process user query with the chatbot
+
+
 def process_query():
     query = feedback_entry.get()
-    
+
     # Perform actions based on user query
     if "open notepad" in query.lower():
         try:
@@ -94,8 +102,10 @@ def process_query():
     # Perform reinforcement learning and optimization based on user query
     # Adapt AI model and automation tactics based on feedback points
 
+
 # Create a button to submit feedback
-submit_button = tk.Button(window, text="Submit Feedback", command=process_feedback)
+submit_button = tk.Button(
+    window, text="Submit Feedback", command=process_feedback)
 submit_button.pack()
 
 # Create a button to submit chatbot query
