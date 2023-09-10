@@ -15,6 +15,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+
 class Quadtree:
     def __init__(self, boundary, capacity=4):
         self.boundary = boundary
@@ -95,12 +96,14 @@ class Quadtree:
         self.southeast = None
         self.southwest = None
 
+
 class Point:
     def __init__(self, rect):
         self.rect = rect
 
     def __repr__(self):
         return f"Point({self.rect})"
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -141,6 +144,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip(self.velocity.x, self.velocity.y)
         self.rect.clamp_ip(pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, speed, color):
         super().__init__()
@@ -153,15 +157,17 @@ class Enemy(pygame.sprite.Sprite):
         self.angle = random.uniform(0, 2 * math.pi)
 
     def update(self):
-        direction = pygame.math.Vector2(math.cos(self.angle), math.sin(self.angle))
+        direction = pygame.math.Vector2(
+            math.cos(self.angle), math.sin(self.angle))
         velocity = direction * self.speed
         self.rect.move_ip(velocity.x, velocity.y)
-        
+
         if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
             self.angle = math.pi - self.angle
 
         if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.angle = -self.angle
+
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, player):
@@ -169,7 +175,8 @@ class PowerUp(pygame.sprite.Sprite):
         self.image = pygame.Surface((20, 20))
         self.image.fill(GREEN)  # Green for power-up
         self.rect = self.image.get_rect()
-        self.rect.center = (random.randint(0, SCREEN_WIDTH), random.randint(0, SCREEN_HEIGHT))
+        self.rect.center = (random.randint(0, SCREEN_WIDTH),
+                            random.randint(0, SCREEN_HEIGHT))
         self.player = player
 
     def update(self):
@@ -179,22 +186,25 @@ class PowerUp(pygame.sprite.Sprite):
     def apply_power_up(self):
         self.player.speed += 2  # Increase player speed temporarily
 
+
 class EnemyType1(Enemy):
     def __init__(self, speed):
         super().__init__(speed, BLUE)
 
     def update(self):
-        direction = pygame.math.Vector2(math.cos(self.angle), math.sin(self.angle))
+        direction = pygame.math.Vector2(
+            math.cos(self.angle), math.sin(self.angle))
         velocity = direction * self.speed
         speed_factor = random.uniform(0.9, 1.1)
         velocity *= speed_factor
         self.rect.move_ip(velocity.x, velocity.y)
-        
+
         if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
             self.angle = math.pi - self.angle
 
         if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.angle = -self.angle
+
 
 class BicycleGame:
     def __init__(self):
@@ -249,7 +259,8 @@ class BicycleGame:
             self.all_sprites.add(power_up)
 
     def check_collision(self):
-        range = Rect(self.player.rect.x - 50, self.player.rect.y - 50, 100, 100)
+        range = Rect(self.player.rect.x - 50,
+                     self.player.rect.y - 50, 100, 100)
         collided_enemies = self.quadtree.query(range)
         if collided_enemies:
             return True
@@ -257,7 +268,8 @@ class BicycleGame:
 
     def show_game_over(self):
         game_over_text = self.font.render("Game Over", True, WHITE)
-        game_over_rect = game_over_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        game_over_rect = game_over_text.get_rect(
+            center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
         self.screen.fill(BLACK)
         self.screen.blit(game_over_text, game_over_rect)
         pygame.display.flip()
@@ -303,7 +315,8 @@ class BicycleGame:
     def run(self):
         running = True
         while running:
-            self.dirty_rects.append(pygame.Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
+            self.dirty_rects.append(pygame.Rect(
+                0, 0, SCREEN_WIDTH, SCREEN_HEIGHT))
 
             self.clock.tick(FPS)
             running = self.handle_events()
@@ -317,6 +330,7 @@ class BicycleGame:
             self.draw()
 
         pygame.quit()
+
 
 if __name__ == "__main__":
     game = BicycleGame()
